@@ -1,4 +1,4 @@
-# 🚀 AI Agent: LinkedIn Content Machine (Cloud Compatible)
+# 🚀 AI Agent: LinkedIn Content Machine
 
 An advanced **n8n workflow** that turns raw notes or URLs into viral-style LinkedIn posts using **Google Gemini**. It features a "Human-in-the-loop" approval system via Telegram to ensure quality before publishing.
 
