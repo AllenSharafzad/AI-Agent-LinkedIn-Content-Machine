@@ -1,0 +1,971 @@
+{
+  "name": "Linkedin Post - Cloud Rebuilt",
+  "nodes": [
+    {
+      "parameters": {
+        "content": "## 📥 Input & Validation\nReceives Telegram messages, validates sender, and handles both URL and text inputs.",
+        "height": 340,
+        "width": 620
+      },
+      "id": "012c6bc5-5290-4faf-81ef-ec3132caad57",
+      "name": "📥 Input & Validation",
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        2000,
+        1264
+      ],
+      "typeVersion": 1
+    },
+    {
+      "parameters": {
+        "content": "## 🔄 Content Processing\nHandles URL scraping (via HTTP) OR direct text input, then loads your persona.",
+        "height": 380,
+        "width": 720
+      },
+      "id": "affd1615-987a-4d74-b93c-c2f8f56bd4c5",
+      "name": "🔄 Content Processing",
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        2928,
+        1168
+      ],
+      "typeVersion": 1
+    },
+    {
+      "parameters": {
+        "content": "## 🤖 AI Generation\nGenerates/rewrites post in your voice using Gemini, then creates an image prompt.",
+        "height": 500,
+        "width": 584
+      },
+      "id": "b868f76c-6b4a-4b7e-ab2b-0ae9b579ab66",
+      "name": "🤖 AI Generation",
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        3712,
+        1200
+      ],
+      "typeVersion": 1
+    },
+    {
+      "parameters": {
+        "content": "## 🎨 Image & Preview\nGenerates image with Gemini Imagen and sends preview to Telegram.",
+        "height": 280,
+        "width": 320
+      },
+      "id": "fa853692-10a3-49f8-9a3c-278aeb04ebf8",
+      "name": "🎨 Image & Preview",
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        4320,
+        1216
+      ],
+      "typeVersion": 1
+    },
+    {
+      "parameters": {
+        "content": "## ✅ Approval Flow\nWaits for your yes/no response in Telegram before proceeding.",
+        "height": 320,
+        "width": 320
+      },
+      "id": "459fb575-6ad6-4264-af85-472d79e4382c",
+      "name": "✅ Approval Flow",
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        4832,
+        1168
+      ],
+      "typeVersion": 1
+    },
+    {
+      "parameters": {
+        "content": "## 🚀 Publish\nPosts to LinkedIn with image and sends confirmation to Telegram.",
+        "height": 268,
+        "width": 684
+      },
+      "id": "4d1c4164-d8a8-4398-9aa2-584527f9bed2",
+      "name": "🚀 Publish",
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        5184,
+        1136
+      ],
+      "typeVersion": 1
+    },
+    {
+      "parameters": {
+        "content": "## ⚠️ Error Handling\nCatches errors and notifies via Telegram.",
+        "height": 200,
+        "width": 300
+      },
+      "id": "c9d1ef1b-c38c-48ee-8148-778105c26ebf",
+      "name": "⚠️ Error Handling",
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        3712,
+        1776
+      ],
+      "typeVersion": 1
+    },
+    {
+      "parameters": {
+        "chatId": "={{ $('Telegram Trigger').item.json.message.from.id }}",
+        "text": "=🚀 Your LinkedIn post is live!\n\nCheck it out here 👇\nhttps://www.linkedin.com/feed/update/{{ $json.urn }}\n",
+        "additionalFields": {}
+      },
+      "id": "30b348ea-da3b-48d3-8021-520381e1dfba",
+      "name": "Send Success Message",
+      "type": "n8n-nodes-base.telegram",
+      "position": [
+        5696,
+        1232
+      ],
+      "webhookId": "d7367330-c52e-44d3-9bea-2e174099f8c1",
+      "notesInFlow": false,
+      "typeVersion": 1.2,
+      "credentials": {
+        "telegramApi": {
+          "id": "YMdDJmI1VwMNoEbc",
+          "name": "Telegram account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "chatId": "={{ $('Telegram Trigger').item.json.message.from.id }}",
+        "text": "=Your post was not published. You decided to decline.",
+        "additionalFields": {
+          "appendAttribution": false
+        }
+      },
+      "id": "4f21e300-3011-46f4-a684-ac235237fa29",
+      "name": "Send Decline Message",
+      "type": "n8n-nodes-base.telegram",
+      "position": [
+        5248,
+        1536
+      ],
+      "webhookId": "78256600-d91c-4001-a3d8-acc33d327aaf",
+      "notesInFlow": false,
+      "typeVersion": 1.2,
+      "credentials": {
+        "telegramApi": {
+          "id": "YMdDJmI1VwMNoEbc",
+          "name": "Telegram account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "version": 2,
+            "leftValue": "",
+            "caseSensitive": true,
+            "typeValidation": "strict"
+          },
+          "combinator": "and",
+          "conditions": [
+            {
+              "id": "b471d7f2-5e45-431b-89ad-690e3209b4e4",
+              "operator": {
+                "type": "boolean",
+                "operation": "true",
+                "singleValue": true
+              },
+              "leftValue": "={{ $json.data.approved }}",
+              "rightValue": ""
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "08634ce3-209b-4fc9-8b13-3915956a1a87",
+      "name": "Check Approval",
+      "type": "n8n-nodes-base.if",
+      "position": [
+        5024,
+        1328
+      ],
+      "typeVersion": 2.2
+    },
+    {
+      "parameters": {
+        "person": "YOUR_LINKEDIN_PERSON_ID",
+        "text": "={{ $json.post }}",
+        "shareMediaCategory": "IMAGE",
+        "binaryPropertyName": "=data",
+        "additionalFields": {}
+      },
+      "id": "b2ccdf97-68e0-4eb4-acb4-cf53e630a840",
+      "name": "Create LinkedIn Post",
+      "type": "n8n-nodes-base.linkedIn",
+      "position": [
+        5472,
+        1232
+      ],
+      "typeVersion": 1,
+      "alwaysOutputData": false,
+      "credentials": {
+        "linkedInOAuth2Api": {
+          "id": "jGfr0UhYW0PifkvP",
+          "name": "LinkedIn account 2"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "sendAndWait",
+        "chatId": "={{ $('Telegram Trigger').item.json.message.from.id }}",
+        "message": "=Please review the post and image above.\n\nText:\n{{ $('AI Agent1').first().json.output.post.replace(/[*_`\\[\\]]/g, '') }}",
+        "approvalOptions": {
+          "values": {
+            "approvalType": "double"
+          }
+        },
+        "options": {
+          "appendAttribution": false
+        }
+      },
+      "id": "101d79d3-038e-4b86-a2f5-9d813fc327e4",
+      "name": "Send Message and Wait for Approval",
+      "type": "n8n-nodes-base.telegram",
+      "position": [
+        4800,
+        1328
+      ],
+      "webhookId": "e3300e13-a551-442a-b154-85ba6c1567d9",
+      "typeVersion": 1.2,
+      "credentials": {
+        "telegramApi": {
+          "id": "YMdDJmI1VwMNoEbc",
+          "name": "Telegram account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "const post = $input.first().json.output.post;\nconst prompt = `Create a professional, high-quality, vibrant digital illustration suitable for a viral LinkedIn post. \n\nContext/Topic: ${post.substring(0, 300)}...\n\nStyle: Modern, clean, corporate but creative, vector art style, vibrant colors. No text in the image.`;\n\nreturn { imagePrompt: prompt, post: post };"
+      },
+      "id": "be04bae3-6a0b-4b4a-bd9c-dffe58abe50f",
+      "name": "📝 Create Image Prompt",
+      "type": "n8n-nodes-base.code",
+      "position": [
+        4128,
+        1328
+      ],
+      "typeVersion": 2
+    },
+    {
+      "parameters": {
+        "operation": "sendPhoto",
+        "chatId": "={{ $('Telegram Trigger').item.json.message.from.id }}",
+        "binaryData": true,
+        "additionalFields": {
+          "caption": "🎨 Generated Image for your post (Gemini)"
+        }
+      },
+      "id": "bbdd8893-93be-4cb7-83fc-c4233f88a959",
+      "name": "📨 Send Preview Image",
+      "type": "n8n-nodes-base.telegram",
+      "position": [
+        4576,
+        1328
+      ],
+      "webhookId": "0c493945-2e44-4a01-a5fa-3a87bd0f2f59",
+      "typeVersion": 1.2,
+      "credentials": {
+        "telegramApi": {
+          "id": "YMdDJmI1VwMNoEbc",
+          "name": "Telegram account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "schemaType": "manual",
+        "inputSchema": "{\n  \"$schema\": \"http://json-schema.org/draft-07/schema#\",\n  \"title\": \"LinkedIn Post Output\",\n  \"description\": \"Complete LinkedIn post with hook, content, and hashtags - ready to publish\",\n  \"type\": \"object\",\n  \"properties\": {\n    \"post\": {\n      \"type\": \"string\",\n      \"description\": \"The complete LinkedIn post including hook, body, CTA, and hashtags - ready to copy and paste directly to LinkedIn\",\n      \"minLength\": 100,\n      \"maxLength\": 3000\n    }\n  },\n  \"required\": [\n    \"post\"\n  ],\n  \"additionalProperties\": false\n}"
+      },
+      "id": "a8147ce1-3083-45c4-99ff-3142d66f1ba4",
+      "name": "Structured Output Parser",
+      "type": "@n8n/n8n-nodes-langchain.outputParserStructured",
+      "position": [
+        3952,
+        1536
+      ],
+      "typeVersion": 1.3
+    },
+    {
+      "parameters": {
+        "options": {
+          "temperature": 1
+        }
+      },
+      "id": "d4524112-bdd2-40ff-90c5-92589c531a34",
+      "name": "Google Gemini Chat Model",
+      "type": "@n8n/n8n-nodes-langchain.lmChatGoogleGemini",
+      "position": [
+        3712,
+        1552
+      ],
+      "typeVersion": 1,
+      "credentials": {
+        "googlePalmApi": {
+          "id": "jor0x36mEkohq7b2",
+          "name": "Google Gemini(PaLM) Api account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=Generate/rewrite the LinkedIn post now based on the input provided.",
+        "hasOutputParser": true,
+        "options": {
+          "systemMessage": "=# LinkedIn Post Generator/Rewriter - Match Writing Style\n\nYou are an expert LinkedIn content creator. Based on the input provided, either:\n- REWRITE an existing post in the target persona's style (if original post text is provided)\n- CREATE a new post from article/notes (if raw content/article text is provided)\n\n## Input Content\n{{ $json.originalPostText }}\n\n## Target Persona\nName: {{ $json.persona.name }}\nTone: {{ $json.persona.style.tone }}\nVoice: {{ $json.persona.style.voice }}\nFormatting: {{ $json.persona.style.formatting }}\nHooks: {{ $json.persona.style.hooks }}\nCTA Style: {{ $json.persona.style.callToAction }}\nLength: {{ $json.persona.postLength }}\nExpertise: {{ $json.persona.expertiseAreas.join(', ') }}\nCommon Phrases: {{ $json.persona.commonPhrases.join(', ') }}\nEmojis: {{ $json.persona.preferredEmojis.join(' ') }}\n\n## Content Niche\nFocus on: AI, AI agents, multi-agent systems, automation, RAG, LLM engineering, product building, and technology.\n\n## Requirements\n\n**Content Guidelines:**\n- Preserve all URLs/links from original (keep exact URLs if any)\n- Keep key statistics and data points\n- Maintain company/product names mentioned\n- Preserve core message and insights\n\n**Style Matching:**\n- Match the persona's typical hooks and opening style\n- Use their common phrases naturally\n- Follow their tone, voice, and formatting\n- Include 2-5 of their preferred emojis\n- Match their CTA style\n- Add 3-5 relevant hashtags at end\n\n**LinkedIn Native Formatting (SUPPORTED):**\n✅ **Bold text** - Use *asterisks* for bold\n✅ *Italic text* - Use _underscores_ for italic\n✅ Line breaks and spacing for structure\n✅ Emojis for visual hierarchy (⚡💡🎯→✨)\n✅ CAPS for strong emphasis\n✅ Preserve any URLs exactly\n✅ Hashtags on last line only\n\n❌ NOT supported: # headers, - markdown bullets, > quotes, [link](url) syntax\n\n**Structure:**\n1. Hook (their style, can use *bold* for impact)\n2. Body (their voice & formatting)\n3. Key points (emoji bullets or structured)\n4. CTA (their typical style)\n5. Hashtags (3-5 at end)\n\n## CRITICAL OUTPUT FORMAT\n\nYou MUST return ONLY valid JSON matching this exact schema:\n```json\n{\n  \"post\": \"Complete post here\\n\\nWith line breaks\\n\\n*Bold Title If Needed*\\n\\n#Hashtag1 #Hashtag2\"\n}\n```\n\n**Rules:**\n- Return ONLY the JSON object, nothing else\n- No markdown code fences\n- No explanations before or after\n- Entire post in single \"post\" field\n- Use \\n for line breaks, \\n\\n for paragraphs\n- Use *text* for bold, _text_ for italic\n- Post must be 100-3000 characters\n- Ready to paste into LinkedIn\n\nGenerate the post now."
+        }
+      },
+      "id": "5d602bcc-90fd-4ff8-995f-441adc8e1f4e",
+      "name": "AI Agent1",
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "position": [
+        3776,
+        1328
+      ],
+      "typeVersion": 2.2
+    },
+    {
+      "parameters": {
+        "chatId": "={{ $('Telegram Trigger').item.json.message.from.id }}",
+        "text": "={{ $json.errorMessage }}",
+        "additionalFields": {
+          "appendAttribution": false
+        }
+      },
+      "id": "98d1d260-5839-4d9d-92d2-8f384536c6e8",
+      "name": "Send Error Message",
+      "type": "n8n-nodes-base.telegram",
+      "position": [
+        3840,
+        1872
+      ],
+      "webhookId": "3c21b36b-2d91-4fbd-9db4-5c0d38c4d385",
+      "notesInFlow": false,
+      "typeVersion": 1.2,
+      "credentials": {
+        "telegramApi": {
+          "id": "YMdDJmI1VwMNoEbc",
+          "name": "Telegram account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "// ═══════════════════════════════════════════════════════════════\n// CUSTOMIZE THIS PERSONA TO MATCH YOUR LINKEDIN WRITING STYLE\n// ═══════════════════════════════════════════════════════════════\n\nconst PERSONA = {\n  name: \"Allen\",\n  style: {\n    tone: \"Professional yet conversational, engaging and authentic\",\n    voice: \"First-person, direct, relatable\",\n    formatting: \"Short paragraphs, bullet points with emojis, strategic white space\",\n    hooks: \"Start with bold statements, questions, or surprising facts about AI/automation\",\n    callToAction: \"Encourage discussion, ask questions, invite engagement\"\n  },\n  expertiseAreas: [\n    \"AI and AI agents\",\n    \"Multi-agent systems\",\n    \"Automation workflows\",\n    \"RAG and LLM engineering\",\n    \"Product building and technology\"\n  ],\n  postStructure: {\n    opening: \"Hook with a question, stat, or bold statement about AI/tech\",\n    body: \"3-5 short paragraphs with actionable insights\",\n    bullets: \"Use emoji bullets for key takeaways\",\n    closing: \"Strong CTA or thought-provoking question\",\n    hashtags: \"3-5 relevant hashtags\"\n  },\n  commonPhrases: [\n    \"Here's the thing:\",\n    \"Let me break this down:\",\n    \"The reality is:\",\n    \"Here's what I learned:\",\n    \"This changed everything:\",\n    \"Quick story:\",\n    \"The future of AI is:\"\n  ],\n  preferredEmojis: [\"🚀\", \"💡\", \"🎯\", \"⚡\", \"🔥\", \"✨\", \"📈\", \"💪\", \"🤖\", \"🧠\"],\n  postLength: \"medium\",\n  styleNotes: [\n    \"Always provide actionable value\",\n    \"Share personal experiences and lessons\",\n    \"Use concrete examples, not vague advice\",\n    \"Keep it authentic and genuine\",\n    \"Balance education with entertainment\",\n    \"Never overly salesy or promotional\",\n    \"Focus on AI, automation, and tech topics\"\n  ]\n};\n\n// Get input data with fallbacks\nconst inputData = $input.first().json;\nconst postText = inputData.postText || '';\nconst authorName = inputData.authorName || 'Unknown';\nconst engagement = inputData.engagement || 0;\nconst inputMode = inputData.inputMode || 'text';\nconst originalUrl = inputData.url || null;\n\nreturn [{\n  json: {\n    ...inputData,\n    persona: PERSONA,\n    originalPostText: postText,\n    originalAuthor: authorName,\n    originalEngagement: engagement,\n    originalUrl: originalUrl,\n    inputMode: inputMode,\n    personaLoaded: true\n  }\n}];"
+      },
+      "id": "7390f043-43f1-42fb-8655-866402924453",
+      "name": "👤 Load Your Persona",
+      "type": "n8n-nodes-base.code",
+      "position": [
+        3552,
+        1328
+      ],
+      "typeVersion": 2,
+      "notes": "📝 CUSTOMIZE THIS - Edit the PERSONA object to match YOUR writing style"
+    },
+    {
+      "parameters": {
+        "jsCode": "// SMART INPUT ROUTER - Handles both URL and Text inputs\n\nconst userMessage = $input.first().json.message.text || '';\n\n// LinkedIn URL patterns\nconst urlPatterns = [\n  /https?:\\/\\/(?:www\\.)?linkedin\\.com\\/posts\\/[^\\s]+/gi,\n  /https?:\\/\\/(?:www\\.)?linkedin\\.com\\/feed\\/update\\/urn:li:(?:activity|share|ugcPost):[^\\s]+/gi,\n  /https?:\\/\\/(?:www\\.)?linkedin\\.com\\/pulse\\/[^\\s]+/gi\n];\n\n// Try to extract LinkedIn URL\nlet foundUrl = null;\nfor (const pattern of urlPatterns) {\n  const matches = userMessage.match(pattern);\n  if (matches && matches.length > 0) {\n    foundUrl = matches[0].split('?')[0];\n    break;\n  }\n}\n\n// Determine input mode\nif (foundUrl) {\n  return [{\n    json: {\n      inputMode: 'url',\n      url: foundUrl,\n      postText: '',\n      authorName: 'LinkedIn Author',\n      engagement: 0,\n      hasImages: false,\n      valid: true,\n      originalInput: userMessage\n    }\n  }];\n} else {\n  const textContent = userMessage.trim();\n  \n  if (textContent.length < 10) {\n    return [{\n      json: {\n        inputMode: 'error',\n        valid: false,\n        errorMessage: 'Please send either a LinkedIn post URL OR article text/notes (min 10 characters)',\n        originalInput: userMessage\n      }\n    }];\n  }\n  \n  return [{\n    json: {\n      inputMode: 'text',\n      url: null,\n      postText: textContent,\n      authorName: 'Your Notes',\n      engagement: 0,\n      hasImages: false,\n      valid: true,\n      originalInput: userMessage\n    }\n  }];\n}"
+      },
+      "id": "06c21ff1-99e2-46e4-8359-6f1b4ff553b5",
+      "name": "🔍 Smart Input Router",
+      "type": "n8n-nodes-base.code",
+      "position": [
+        2592,
+        1424
+      ],
+      "typeVersion": 2,
+      "notes": "Detects URL vs Text input and routes accordingly"
+    },
+    {
+      "parameters": {
+        "updates": [
+          "message"
+        ],
+        "additionalFields": {}
+      },
+      "id": "5e128a39-b6d9-44a0-9f61-bca21adddb71",
+      "name": "Telegram Trigger",
+      "type": "n8n-nodes-base.telegramTrigger",
+      "position": [
+        2096,
+        1424
+      ],
+      "webhookId": "22e620fc-a822-4ea9-9612-2e9c84511187",
+      "typeVersion": 1.2,
+      "credentials": {
+        "telegramApi": {
+          "id": "YMdDJmI1VwMNoEbc",
+          "name": "Telegram account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "loose",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "security-check-id",
+              "operator": {
+                "type": "number",
+                "operation": "equals"
+              },
+              "leftValue": "={{ $json.message.from.id }}",
+              "rightValue": "="
+            }
+          ],
+          "combinator": "and"
+        },
+        "looseTypeValidation": true,
+        "options": {}
+      },
+      "id": "0d3b8736-cf60-41f7-9108-cb5ebc8bcde2",
+      "name": "🔒 Security Check",
+      "type": "n8n-nodes-base.if",
+      "position": [
+        2320,
+        1424
+      ],
+      "typeVersion": 2.2,
+      "notes": "Compares Telegram user ID (number). Set TELEGRAM_USER_ID env var OR hardcode your ID."
+    },
+    {
+      "parameters": {
+        "jsCode": "// ═══════════════════════════════════════════════════════════════\n// LINKEDIN POST CLEANER WITH BINARY DATA\n// ═══════════════════════════════════════════════════════════════\nlet postText = '';\n\ntry {\n  postText = $('AI Agent1').first().json.output.post || '';\n} catch (e) {\n  postText = $input.first().json.post || '';\n}\n\nfunction cleanPost(text) {\n  if (!text) return '';\n  let cleaned = text.replace(/\\\\n/g, '\\n');\n  cleaned = cleaned.replace(/\\*\\*([^*]+)\\*\\*/g, '$1');\n  cleaned = cleaned.replace(/\\*([^*]+)\\*/g, '$1');\n  cleaned = cleaned.replace(/^#{1,6}\\s+/gm, '');\n  cleaned = cleaned.replace(/\\n{4,}/g, '\\n\\n\\n');\n  cleaned = cleaned.trim();\n  \n  const hashtagMatch = cleaned.match(/(#\\w+(?:\\s+#\\w+)*)\\s*$/);\n  if (hashtagMatch) {\n    cleaned = cleaned.replace(/(#\\w+(?:\\s+#\\w+)*)\\s*$/, '').trim();\n    cleaned = cleaned + '\\n\\n' + hashtagMatch[1];\n  }\n  \n  return cleaned;\n}\n\ntry {\n  const cleanedPost = cleanPost(postText);\n  \n  // Get the binary data from the image generation node\n  let imageBinary = null;\n  try {\n    imageBinary = $('Generate an image').first().binary.data;\n  } catch (e) {\n    // Image generation might have failed - continue without image\n    console.log('No image binary found, continuing without image');\n  }\n  \n  const output = {\n    json: {\n      post: cleanedPost,\n      _original: postText.substring(0, 500),\n      hasImage: !!imageBinary\n    }\n  };\n  \n  if (imageBinary) {\n    output.binary = { data: imageBinary };\n  }\n  \n  return [output];\n  \n} catch (error) {\n  return [{\n    json: {\n      post: postText || 'Error: No post content generated',\n      validation: {\n        isValid: false,\n        issues: ['Cleaning failed: ' + error.message]\n      },\n      hasImage: false\n    },\n  }];\n}"
+      },
+      "id": "0be5c516-1d6d-40ed-bb81-a4ad33fa81b1",
+      "name": "Prepare Content for LinkedIn",
+      "type": "n8n-nodes-base.code",
+      "position": [
+        5248,
+        1232
+      ],
+      "typeVersion": 2
+    },
+    {
+      "parameters": {
+        "content": "## LinkedIn Post Creator \n**Telegram Bot → AI Generate/Rewrite → Auto-Post**\n\n### How It Works\n1. Send EITHER:\n   - A LinkedIn post URL to rewrite\n   - Article text/notes to turn into a post\n2. AI generates post in YOUR style + creates image\n3. Preview in Telegram, approve or reject\n4. Approved posts go live on LinkedIn\n\n### Setup Required\n1. **Telegram Bot** - Create via @BotFather\n2. **Google Gemini API** - For AI writing & images\n3. **LinkedIn OAuth** - For posting\n4. **Your Telegram ID** - Set TELEGRAM_USER_ID env var\n5. **Your Persona** - Customize the Load Persona node\n\n### Cloud Compatible ✅\n- No community nodes required\n- Works on n8n.io Cloud",
+        "height": 560,
+        "width": 460
+      },
+      "id": "83a6207f-201e-4317-abea-3476492a0c2c",
+      "name": "📋 Workflow Overview",
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        2288,
+        672
+      ],
+      "typeVersion": 1
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "version": 2,
+            "leftValue": "",
+            "caseSensitive": true,
+            "typeValidation": "strict"
+          },
+          "combinator": "and",
+          "conditions": [
+            {
+              "id": "valid-check",
+              "operator": {
+                "type": "boolean",
+                "operation": "true",
+                "singleValue": true
+              },
+              "leftValue": "={{ $json.valid }}",
+              "rightValue": ""
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "18495833-0891-4d32-8aee-c486ee2fc17e",
+      "name": "❓ Valid Input?",
+      "type": "n8n-nodes-base.if",
+      "position": [
+        2816,
+        1424
+      ],
+      "typeVersion": 2.2,
+      "notes": "Checks if input is valid (URL or sufficient text)"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "version": 2,
+            "leftValue": "",
+            "caseSensitive": true,
+            "typeValidation": "strict"
+          },
+          "combinator": "and",
+          "conditions": [
+            {
+              "id": "mode-check",
+              "operator": {
+                "type": "string",
+                "operation": "equals"
+              },
+              "leftValue": "={{ $json.inputMode }}",
+              "rightValue": "url"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "9381cd52-baeb-4fc7-b31b-876d8ce20499",
+      "name": "🔀 URL or Text Mode?",
+      "type": "n8n-nodes-base.if",
+      "position": [
+        3040,
+        1328
+      ],
+      "typeVersion": 2.2,
+      "notes": "Routes to URL scraping or direct text processing"
+    },
+    {
+      "parameters": {
+        "jsCode": "// ═══════════════════════════════════════════════════════════════\n// CLOUD-COMPATIBLE LINKEDIN SCRAPER PLACEHOLDER\n// ═══════════════════════════════════════════════════════════════\n// NOTE: LinkedIn blocks direct scraping. This node handles URL mode\n// by requesting the user to paste the post text if scraping fails.\n// In production, you could use a 3rd party API service.\n\nconst inputData = $input.first().json;\nconst url = inputData.url || '';\n\n// Since we can't scrape LinkedIn directly from Cloud,\n// we'll use what we have and ask user to provide text if needed.\n// For now, pass through with placeholder data.\n\nreturn [{\n  json: {\n    postText: `[Content from LinkedIn post - URL provided: ${url}]\\n\\nNote: Please re-send with the actual post text copied from LinkedIn, as direct scraping is not available in Cloud mode.`,\n    authorName: 'LinkedIn Author',\n    engagement: 0,\n    hasImages: false,\n    url: url,\n    inputMode: 'url',\n    scrapingNote: 'LinkedIn scraping requires external service. For best results, copy the post text directly.'\n  }\n}];"
+      },
+      "id": "8683cfd3-b017-422e-ba54-abfd4a7545e7",
+      "name": "📥 Handle URL Input",
+      "type": "n8n-nodes-base.code",
+      "position": [
+        3216,
+        1216
+      ],
+      "typeVersion": 2,
+      "notes": "Handles URL mode - placeholder for external scraping service"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "post-text",
+              "name": "postText",
+              "type": "string",
+              "value": "={{ $json.postText }}"
+            },
+            {
+              "id": "author-name",
+              "name": "authorName",
+              "type": "string",
+              "value": "={{ $json.authorName || 'Your Notes' }}"
+            },
+            {
+              "id": "engagement",
+              "name": "engagement",
+              "type": "number",
+              "value": "={{ $json.engagement || 0 }}"
+            },
+            {
+              "id": "has-images",
+              "name": "hasImages",
+              "type": "boolean",
+              "value": "={{ $json.hasImages || false }}"
+            },
+            {
+              "id": "input-mode",
+              "name": "inputMode",
+              "type": "string",
+              "value": "={{ $json.inputMode || 'text' }}"
+            },
+            {
+              "id": "original-url",
+              "name": "url",
+              "type": "string",
+              "value": "={{ $json.url || '' }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "3b5edb3c-6e29-4227-9bc0-4c914da67107",
+      "name": "📝 Prepare Text Input",
+      "type": "n8n-nodes-base.set",
+      "position": [
+        3248,
+        1488
+      ],
+      "typeVersion": 3.4,
+      "notes": "Passes through text mode data with consistent field names"
+    },
+    {
+      "parameters": {},
+      "id": "c1bb677f-4e81-4896-90cd-9ffaddddc131",
+      "name": "🔗 Merge Inputs",
+      "type": "n8n-nodes-base.merge",
+      "position": [
+        3392,
+        1312
+      ],
+      "typeVersion": 3.1,
+      "notes": "Merges URL and Text mode paths"
+    },
+    {
+      "parameters": {
+        "chatId": "={{ $('Telegram Trigger').item.json.message.from.id }}",
+        "text": "=❌ Invalid input or not authorized.\n\nPlease send either:\n1️⃣ A LinkedIn post URL\n2️⃣ Article text or notes (min 10 characters)",
+        "additionalFields": {
+          "appendAttribution": false
+        }
+      },
+      "id": "b5902ca5-1fe6-4116-83dd-f865894dbbb3",
+      "name": "Send Invalid Input Error",
+      "type": "n8n-nodes-base.telegram",
+      "position": [
+        2816,
+        1632
+      ],
+      "webhookId": "invalid-error-webhook",
+      "notesInFlow": false,
+      "typeVersion": 1.2,
+      "credentials": {
+        "telegramApi": {
+          "id": "YMdDJmI1VwMNoEbc",
+          "name": "Telegram account"
+        }
+      }
+    },
+    {
+      "parameters": {},
+      "id": "8260b1c2-d8be-4146-ad80-4430610d6f84",
+      "name": "⚠️ Error Trigger",
+      "type": "n8n-nodes-base.errorTrigger",
+      "position": [
+        3424,
+        1872
+      ],
+      "typeVersion": 1
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "error-msg",
+              "name": "errorMessage",
+              "type": "string",
+              "value": "=⚠️ Workflow Error\n\nSomething went wrong:\n{{ $json.error?.message || 'Unknown error' }}\n\nNode: {{ $json.error?.node?.name || 'Unknown' }}\n\nPlease try again or contact support."
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "0ddaa1af-e6cd-49a8-869d-b9482d320f6f",
+      "name": "Format Error Message",
+      "type": "n8n-nodes-base.set",
+      "position": [
+        3600,
+        1872
+      ],
+      "typeVersion": 3.4
+    },
+    {
+      "parameters": {
+        "resource": "image",
+        "prompt": "=Create a professional, high-quality, vibrant digital illustration suitable for a viral LinkedIn post. \n\nContext/Topic: *Here's the thing:* The future of business isn't about search, it's about conversation. 🚀\n\nThe reality is, AI and modern chatbots aren't just glorified FAQs anymore. We're talking about sophisticated neural networks that deeply understand context, tone, and intent. As someone building products with...\n\nStyle: Modern, clean, corporate but creative, vector art style, vibrant colors. No text in the image.",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.openAi",
+      "typeVersion": 2.1,
+      "position": [
+        4320,
+        1392
+      ],
+      "id": "3a997155-4993-4ed5-b18c-2982f1355140",
+      "name": "Generate an image1",
+      "credentials": {
+        "openAiApi": {
+          "id": "s2U4L80Ixjvj7PPv",
+          "name": "OpenAi account"
+        }
+      }
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Telegram Trigger": {
+      "main": [
+        [
+          {
+            "node": "🔒 Security Check",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "🔒 Security Check": {
+      "main": [
+        [
+          {
+            "node": "🔍 Smart Input Router",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "🔍 Smart Input Router": {
+      "main": [
+        [
+          {
+            "node": "❓ Valid Input?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "❓ Valid Input?": {
+      "main": [
+        [
+          {
+            "node": "🔀 URL or Text Mode?",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Send Invalid Input Error",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "🔀 URL or Text Mode?": {
+      "main": [
+        [
+          {
+            "node": "📥 Handle URL Input",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "📝 Prepare Text Input",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "📥 Handle URL Input": {
+      "main": [
+        [
+          {
+            "node": "🔗 Merge Inputs",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "📝 Prepare Text Input": {
+      "main": [
+        [
+          {
+            "node": "👤 Load Your Persona",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "🔗 Merge Inputs": {
+      "main": [
+        [
+          {
+            "node": "👤 Load Your Persona",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "👤 Load Your Persona": {
+      "main": [
+        [
+          {
+            "node": "AI Agent1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Google Gemini Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Agent1",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Structured Output Parser": {
+      "ai_outputParser": [
+        [
+          {
+            "node": "AI Agent1",
+            "type": "ai_outputParser",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "AI Agent1": {
+      "main": [
+        [
+          {
+            "node": "📝 Create Image Prompt",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "📝 Create Image Prompt": {
+      "main": [
+        [
+          {
+            "node": "Generate an image1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "📨 Send Preview Image": {
+      "main": [
+        [
+          {
+            "node": "Send Message and Wait for Approval",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Send Message and Wait for Approval": {
+      "main": [
+        [
+          {
+            "node": "Check Approval",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Check Approval": {
+      "main": [
+        [
+          {
+            "node": "Prepare Content for LinkedIn",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Send Decline Message",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Prepare Content for LinkedIn": {
+      "main": [
+        [
+          {
+            "node": "Create LinkedIn Post",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Create LinkedIn Post": {
+      "main": [
+        [
+          {
+            "node": "Send Success Message",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "⚠️ Error Trigger": {
+      "main": [
+        [
+          {
+            "node": "Format Error Message",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Format Error Message": {
+      "main": [
+        [
+          {
+            "node": "Send Error Message",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Generate an image1": {
+      "main": [
+        [
+          {
+            "node": "📨 Send Preview Image",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "db8a8a9e-b02e-4f22-baff-97e519d60404",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "89a651d155ff26dcdbad76cd706aafda14d50b19c33e2e1915931090f3f97af0"
+  },
+  "id": "yZBahRaM2gMNHpkJ",
+  "tags": []
+}
