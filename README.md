@@ -58,4 +58,4 @@ Add the following variable to your n8n environment variables to secure the bot:
 6.  Activate the workflow!
 
 ---
-*Built with ❤️ using n8n and Google Gemini*
+*Built with ❤️ using n8n and OpenAi*
